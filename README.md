@@ -1,20 +1,10 @@
-# QuickcheckPlayground
+# Quickcheck Playground
 
-**TODO: Add description**
+This project uses QuickCheck Mini from Quviq.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add quickcheck_playground to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:quickcheck_playground, "~> 0.0.1"}]
-        end
-
-  2. Ensure quickcheck_playground is started before your application:
-
-        def application do
-          [applications: [:quickcheck_playground]]
-        end
-
+1. Head over to [QuviQ](http://www.quviq.com/downloads/) and download the _FREE_ version of QuickCheck (Mini).
+2. Unzip the folder, and `cd` into it.
+3. Run `iex`.
+4. Run `:eqc_install.install()` to install QuickCheck Mini. 
+5. Clone this repo, and run `mix deps.get`
+6. Run `mix tests` to run the tests.

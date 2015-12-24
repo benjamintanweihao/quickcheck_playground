@@ -7,6 +7,7 @@ defmodule QuickcheckPlayground.Mixfile do
      elixir: "~> 1.2-rc",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     test_pattern: "*_{test,eqc}.exs",
      deps: deps]
   end
 
@@ -16,8 +17,7 @@ defmodule QuickcheckPlayground.Mixfile do
 
   defp deps do
     [
-      {:excheck, "~> 0.3", only: :test},
-      {:triq, github: "krestenkrab/triq", only: :test}
+      {:eqc_ex, "~> 1.2.4"} 
     ]
   end
 end
