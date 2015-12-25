@@ -18,7 +18,7 @@ defmodule MapEQC do
   property "storing keys and values" do
     forall {k, v, m} <- {key, val, map_2} do
       map = :eqc_symbolic.eval(m)
-      equal(model(Map.put(map, k, v)), model_store(k, v, model(map)))
+      lists_equal(model(Map.put(map, k, v)), model_store(k, v, model(map)))
     end
   end
 
@@ -67,13 +67,29 @@ defmodule MapEQC do
   end
 
   def model_store(k, v, list) do
-    [{k, v} | list]
+    case find_index_with_key(k, list) do
+      {:match, index} ->
+        List.replace_at(list, index, {k, v})
+      _ ->
+        [{k, v} | list]
+    end
+  end
+
+  def find_index_with_key(k, list) do
+    case Enum.find_index(list, fn({x,_}) -> x == k end) do
+      nil   -> :nomatch
+      index -> {:match, index}
+    end
   end
 
   def equal(x, y) do
     when_fail(IO.puts("FAILED ☛ #{inspect(x)} != #{inspect(y)}")) do
       x == y
     end
+  end
+
+  def lists_equal(x, y) do
+    equal(Enum.sort(x), Enum.sort(y))
   end
 
 end
