@@ -29,7 +29,7 @@ defmodule ListEQC do
     forall list <- list(int) do
       forall item <- int do
         implies not item in list do
-            ensure list == List.delete(list, item)
+          ensure list == List.delete(list, item)
         end
       end
     end
