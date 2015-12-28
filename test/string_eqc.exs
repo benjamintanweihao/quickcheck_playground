@@ -29,8 +29,13 @@ defmodule StringEQC do
     end
   end
 
-#  = "abcdefgh"
-#  String.slice(s, 2, 3)           #=> "cde
+  property "slice" do
+    forall {s1, s2} <- {non_empty(list(char)), non_empty(list(char))} do
+      s1 = to_string(s1)
+      s2 = to_string(s2)
+      equal(String.slice(s1 <> s2, String.length(s1), String.length(s2)), s2)
+    end
+  end
 
   # NOTE: We use collect here to point out that the distribution of the data is pretty crappy
   # property "splitting and joining a string with a delimiter yields back the original string" do
