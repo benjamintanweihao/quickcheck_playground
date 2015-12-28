@@ -2,5 +2,5 @@
 " set exrc
 " set secure
 
-map <leader>t :!mix test<CR>
+map <leader>t :!mix test %<CR>
 map <leader>c :!mix compile && mix dialyzer<CR>
