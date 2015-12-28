@@ -22,8 +22,34 @@ defmodule MapEQC do
     end
   end
 
+  property "merging maps is *not* commutative" do
+    forall {m1, m2} <- {map_2, map_2} do
+      map_1 = :eqc_symbolic.eval(m1)
+      map_2 = :eqc_symbolic.eval(m2)
+
+      # NOTE: This will not work, since keys can be overriden! 
+      #       Cool that QC finds this out after ~ 79 tests
+      :eqc.fails(
+        ensure Map.merge(map_1, map_2) == Map.merge(map_2, map_1)
+      )
+    end
+  end
+
+  property "merging maps retains keys" do
+    forall {m1, m2} <- {map_2, map_2} do
+      map_1 = :eqc_symbolic.eval(m1)
+      map_2 = :eqc_symbolic.eval(m2)
+
+      left_keys  = Map.merge(map_1, map_2) |> Map.keys
+      right_keys = Map.merge(map_2, map_1) |> Map.keys
+        
+      equal(left_keys, right_keys)
+    end
+  end
+
   # First version of map generator
-  # NOTE: there's a recursive call to map_1()
+  # NOTE: there's a recursive call to map_1(). We need to
+  #       use the `lazy` macro here.
   def map_1 do
     map_gen = lazy do
       let {k, v, m} <- {key, val, map_1} do

@@ -29,6 +29,9 @@ defmodule StringEQC do
     end
   end
 
+#  = "abcdefgh"
+#  String.slice(s, 2, 3)           #=> "cde
+
   # NOTE: We use collect here to point out that the distribution of the data is pretty crappy
   # property "splitting and joining a string with a delimiter yields back the original string" do
   #   forall {s, d} <- {string, delimiter} do
@@ -38,13 +41,17 @@ defmodule StringEQC do
   #   end
   # end
 
+  # NOTE: We can increase the number of tests with this tag.
   # @tag numtests: 2000
   property "splitting and joining a string with a delimiter yields back the original string" do
 
     forall s <- string do
-      forall d <- elements(s) do
+      # NOTE: We are using sublists here, since delimiters can contain more than
+      #       one character
+      forall d <- non_empty(sublist(s)) do
         s = to_string(s)
-        d = to_string([d])
+        d = to_string(d)
+
         # NOTE: collect must only have the property in `in:`. in other words, only
         #       one line.
         # collect string: s, delimiter: d, in:
@@ -62,6 +69,14 @@ defmodule StringEQC do
     #           end
     #         end
     non_empty(list(alpha))
+  end
+
+  # NOTE: We can use this to construct a variable length string
+  #       that makes use of a vector
+  def variable_length_string do
+    let l <- oneof(:lists.seq(10, 100)) do
+      vector(l, alpha)
+    end
   end
 
   def alpha do
