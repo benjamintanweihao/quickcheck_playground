@@ -30,7 +30,7 @@ defmodule StringEQC do
   end
 
   property "slice" do
-    forall {s1, s2} <- {non_empty(list(char)), non_empty(list(char))} do
+    forall {s1, s2} <- {list(char), list(char)} do
       s1 = to_string(s1)
       s2 = to_string(s2)
       equal(String.slice(s1 <> s2, String.length(s1), String.length(s2)), s2)
