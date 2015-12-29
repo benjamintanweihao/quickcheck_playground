@@ -42,4 +42,36 @@ defmodule ListEQC do
     end
   end
 
+  # NOTE: Testing properties of reverse
+
+  property "reverse is recursive" do
+    forall l <- non_empty(list(char)) do
+      equal Enum.reverse(l), Enum.reverse(tl(l)) ++ [hd(l)]
+    end
+  end
+
+  property "reverse is distributive" do
+    forall {l1, l2} <- {list(char), list(char)} do
+      ensure Enum.reverse(l1 ++ l2) == Enum.reverse(l2) ++ Enum.reverse(l1)
+    end
+  end
+
+  property "reverse is idempotent" do
+    forall l <- list(char) do
+      ensure l |> Enum.reverse |> Enum.reverse == l
+    end
+  end
+
+  property "reverse is equivalent to the Erlang version" do
+    forall l <- list(oneof [real, int]) do
+      ensure Enum.reverse(l) == :lists.reverse(l)
+    end
+  end
+
+  def equal(x, y) do
+    when_fail(IO.puts("FAILED ☛ #{inspect(x)} != #{inspect(y)}")) do
+      x == y
+    end
+  end
+
 end

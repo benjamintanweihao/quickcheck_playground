@@ -50,7 +50,7 @@ defmodule StringEQC do
   # @tag numtests: 2000
   property "splitting and joining a string with a delimiter yields back the original string" do
 
-    forall s <- string do
+    forall s <- long_string do
       # NOTE: We are using sublists here, since delimiters can contain more than
       #       one character
       forall d <- non_empty(sublist(s)) do
@@ -66,6 +66,13 @@ defmodule StringEQC do
 
   end
 
+  property "split string with commas" do
+    forall s <- string_with_commas do
+      s = to_string(s)
+      equal(String.split(s, ",") |> join(","), s)
+    end
+  end
+
   def string do
     # NOTE: We can use `non_empty` instead of `implies s != []`
     #         forall s <- non_empty(list(char)) do
@@ -78,7 +85,7 @@ defmodule StringEQC do
 
   # NOTE: We can use this to construct a variable length string
   #       that makes use of a vector
-  def variable_length_string do
+  def long_string do
     let l <- oneof(:lists.seq(10, 100)) do
       vector(l, alpha)
     end
@@ -87,6 +94,19 @@ defmodule StringEQC do
   def alpha do
     # oneof(:lists.seq(?a, ?z) ++ :lists.seq(?A, ?Z))
     oneof(:lists.seq(?a, ?z))
+  end
+
+  # NOTE: Woah, this is cool. We generate a string between 10 and 20
+  #       characters long, made of up lower cased letters and the
+  #       comma character, of different frequencies.
+  def string_with_commas do
+    let len <- choose(10, 20) do
+      let string <- vector(len,
+                      frequency([{10, oneof(:lists.seq(?a, ?z))},
+                                 {2 , ?,}])) do
+        string 
+      end
+    end
   end
 
   def join(parts, delimiter) do
