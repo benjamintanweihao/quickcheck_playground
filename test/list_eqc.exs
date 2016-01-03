@@ -35,12 +35,12 @@ defmodule ListEQC do
     end
   end
 
-  # Custom generator to generate unique lists
-  def ulist(item) do
-    let l <- list(item) do
-      l |> Enum.sort |> Enum.uniq
-    end
+  property "sorting works" do
+    forall l <- list(int) do
+      ensure l |> Enum.sort |> is_sorted == true
+    end 
   end
+
 
   # NOTE: Testing properties of reverse
 
@@ -68,9 +68,24 @@ defmodule ListEQC do
     end
   end
 
+  def is_sorted([]), do: true
+
+  def is_sorted(list) do
+    list 
+    |> Enum.zip(tl(list)) 
+    |> Enum.all?(fn {x, y} -> x <= y end)
+  end
+
   def equal(x, y) do
     when_fail(IO.puts("FAILED ☛ #{inspect(x)} != #{inspect(y)}")) do
       x == y
+    end
+  end
+
+  # Custom generator to generate unique lists
+  def ulist(item) do
+    let l <- list(item) do
+      l |> Enum.sort |> Enum.uniq
     end
   end
 
